@@ -9,13 +9,16 @@ from io import BytesIO
 import sys
 import kmeans
 
-from urllib.request import Request, urlopen
+try:
+    from urllib.request import Request, urlopen
+except:
+    from urllib2 import Request,urlopen
 
 load_dotenv(find_dotenv())
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 CX = os.environ.get("CX")
 
-query_string = "bird"
+query_string = "dog"
 
 request_url = "https://www.googleapis.com/customsearch/v1?key=" + GOOGLE_API_KEY + "&cx=" + CX + "&searchType=image" + "&q=" + query_string
 response = requests.get(request_url)
@@ -42,7 +45,7 @@ for item in items:
         print("Results are:")
         print(results)
         k.saveCentroidColours(str(count), img.format)
-        # k.showCentroidColours()
+
         for result in results:
             print(kmeans.rgb_to_hex(result))
 
