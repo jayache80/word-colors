@@ -8,6 +8,7 @@ from PIL import Image
 from io import BytesIO
 import sys
 import kmeans
+from math import sqrt
 
 try:
     from urllib.request import Request, urlopen
@@ -28,9 +29,11 @@ print("================== items are: ==================")
 for item in items:
     print(item["link"])
 count = 0
+results_set = []
 for item in items:
     image_string = ""
     image_url = item["link"]
+
     try:
         # with urllib.request.urlopen(image_url) as url:
         req = Request(image_url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -48,11 +51,34 @@ for item in items:
 
         for result in results:
             print(kmeans.rgb_to_hex(result))
-
+            results_set.append(result)
+            print("image", count, "has color:", result)
 
     except:
         print("Unexpected error:", sys.exc_info()[0])
     
     count = count + 1
+
+delta_thresh = 20
+
+for i in range(len(results_set) - 1):
+    # print("i is", i)
+    
+    for j in range(len(results_set) - 1 - i):
+        k = len(results_set ) - 1 - j
+
+        r1 = results_set[i][0]
+        r2 = results_set[k][0]
+
+        g1 = results_set[i][1]
+        g2 = results_set[k][1]
+
+        b1 = results_set[i][2]
+        b2 = results_set[k][2]
+
+        delta = sqrt((r1 - r2)**2 + (g1 - g2)**2 + (b1 - b2)**2)
+        if delta <= delta_thresh:
+            print("results", i, results_set[i], "and", k, results_set[k], "are similar!")
+
 
 # print(json.dumps(j, sort_keys=True, indent=4))
